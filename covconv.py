@@ -9,12 +9,22 @@
 # please visit ' http://opensource.org/licenses/mit-license.php '.
 __version__ = 1
 
+import re
 import urllib
 from xml.etree.ElementTree import *
 
 def atok_plugin_run_process( request_data ):
   result_data = {}
   candidate_array = []
+
+  regex = re.compile(r'^(?:\xE3\x81[\x81-\xBF]|\xE3\x82[\x80-\x93])+$')
+  result = regex.search( request_data['composition_string'] )
+  if result != None :
+    # TODO: 直接変換 
+  else :
+    # TODO: 複数の候補
+
+  target_string = request_data['composition_string']
 
   covconv_pack = tryCov( request_data['composition_string'].encode('utf-8') )
 
