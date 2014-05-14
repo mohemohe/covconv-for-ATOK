@@ -16,23 +16,20 @@ from xml.etree.ElementTree import *
 def atok_plugin_run_process( request_data ):
   result_data = {}
   candidate_array = []
-
-  regex = re.compile(r'^(?:\xE3\x81[\x81-\xBF]|\xE3\x82[\x80-\x93])+$')
-  result = regex.search( request_data['composition_string'] )
-  if result != None :
-    # TODO: 直接変換 
-  else :
-    # TODO: 複数の候補
-
+  
   target_string = request_data['composition_string']
-
+  
   covconv_pack = tryCov( request_data['composition_string'].encode('utf-8') )
-
-  if covconv_pack['success'].decode('utf-8') == '1':
-    candidate_array.append( {'hyoki' : covconv_pack['covlang_kana'].rstrip('っ').decode('utf-8')} )
-    candidate_array.append( {'hyoki' : covconv_pack['covlang_kana'].decode('utf-8')} )
-    candidate_array.append( {'hyoki' : covconv_pack['covlang_orig'].rstrip('っ').decode('utf-8')} )
-    candidate_array.append( {'hyoki' : covconv_pack['covlang_orig'].decode('utf-8')} )
+  
+  if covconv_pack['success'].decode('utf-8') == '1': 
+    regex = re.compile(r'^(?:\xE3\x81[\x81-\xBF]|\xE3\x82[\x80-\x93])+$')
+    result = regex.search( request_data['composition_string'] )
+    if result != None :
+      candidate_array.append( {'hyoki' : covconv_pack['covlang_kana'].rstrip('っ').decode('utf-8')} )
+      candidate_array.append( {'hyoki' : covconv_pack['covlang_kana'].decode('utf-8')} )
+    else :
+      candidate_array.append( {'hyoki' : covconv_pack['covlang_orig'].rstrip('っ').decode('utf-8')} )
+      candidate_array.append( {'hyoki' : covconv_pack['covlang_orig'].decode('utf-8')} )
 
   if int(covconv_pack['covconv4atok_version'].decode('utf-8')) > int(__version__):
     candidate_array.append( { 'hyoki'             : u"こふ語ダイレクト for ATOK の更新があります" , 
