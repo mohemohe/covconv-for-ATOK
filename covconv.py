@@ -7,29 +7,27 @@
 #
 # this code licensed under MIT/X11 License.
 # please visit ' http://opensource.org/licenses/mit-license.php '.
-__version__ = 1
+__version__ = 2
 
 import re
 import urllib
 from xml.etree.ElementTree import *
 
-def atok_plugin_run_process( request_data ):
+def atok_plugin_run_process(request_data):
   result_data = {}
   candidate_array = []
-  
-  target_string = request_data['composition_string']
   
   covconv_pack = tryCov( request_data['composition_string'].encode('utf-8') )
   
   if covconv_pack['success'].decode('utf-8') == '1': 
     regex = re.compile(r'^(?:\xE3\x81[\x81-\xBF]|\xE3\x82[\x80-\x93])+$')
-    result = regex.search( request_data['composition_string'] )
+    result = re.search(regex, request_data['composition_string'])
     if result != None :
-      candidate_array.append( {'hyoki' : covconv_pack['covlang_kana'].rstrip('っ').decode('utf-8')} )
-      candidate_array.append( {'hyoki' : covconv_pack['covlang_kana'].decode('utf-8')} )
-    else :
       candidate_array.append( {'hyoki' : covconv_pack['covlang_orig'].rstrip('っ').decode('utf-8')} )
       candidate_array.append( {'hyoki' : covconv_pack['covlang_orig'].decode('utf-8')} )
+    else :
+      candidate_array.append( {'hyoki' : covconv_pack['covlang_kana'].rstrip('っ').decode('utf-8')} )
+      candidate_array.append( {'hyoki' : covconv_pack['covlang_kana'].decode('utf-8')} )
 
   if int(covconv_pack['covconv4atok_version'].decode('utf-8')) > int(__version__):
     candidate_array.append( { 'hyoki'             : u"こふ語ダイレクト for ATOK の更新があります" , 
@@ -40,11 +38,11 @@ def atok_plugin_run_process( request_data ):
 
   return result_data
 
-def tryCov( ja_JP ):
+def tryCov(ja_JP):
   covconv_pack = {}
 
   url = 'https://api.ghippos.net/covconv/atok/'
-  params = urllib.urlencode( {'ja_JP': ja_JP} )
+  params = urllib.urlencode({'ja_JP': ja_JP})
   xml = urllib.urlopen( url, params )
 
   element = fromstring( xml.read() )
