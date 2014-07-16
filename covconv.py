@@ -3,7 +3,7 @@
 
 ####################################################################
 # covconv.py
-# こふ語ダイレクト for ATOK
+# covconv for ATOK
 # Copyright (c) 2014 mohemohe
 #
 # this code licensed under the MIT/X11 License .
